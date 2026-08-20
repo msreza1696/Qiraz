@@ -18,6 +18,7 @@ const DEFAULT_PROGRESS: UserProgress = {
   darkMode: false,
   sourceApprovals: {},
   languageVerifications: {},
+  quranAudioApprovals: {},
   email: ''
 };
 
@@ -54,7 +55,8 @@ export function useLocalStorage() {
           vocabularyBoxes: parsed.vocabularyBoxes || {},
           quizScores: parsed.quizScores || {},
           sourceApprovals: parsed.sourceApprovals || {},
-          languageVerifications: parsed.languageVerifications || {}
+          languageVerifications: parsed.languageVerifications || {},
+          quranAudioApprovals: parsed.quranAudioApprovals || {}
         };
       }
     } catch (error) {
@@ -241,6 +243,20 @@ export function useLocalStorage() {
     setProgress(imported);
   };
 
+  // Toggle Quran audio approvals (Project Owner only)
+  const toggleQuranAudioApproval = (audioId: string) => {
+    setProgress(prev => {
+      const current = prev.quranAudioApprovals[audioId] || false;
+      return {
+        ...prev,
+        quranAudioApprovals: {
+          ...prev.quranAudioApprovals,
+          [audioId]: !current
+        }
+      };
+    });
+  };
+
   return {
     progress,
     updateProgress,
@@ -252,6 +268,7 @@ export function useLocalStorage() {
     toggleSourceApproval,
     toggleLanguageVerification,
     saveEmailProfile,
-    importProgress
+    importProgress,
+    toggleQuranAudioApproval
   };
 }

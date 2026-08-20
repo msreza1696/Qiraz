@@ -23,7 +23,8 @@ export const App: React.FC = () => {
     toggleSourceApproval,
     registerActivity,
     saveEmailProfile,
-    importProgress
+    importProgress,
+    toggleQuranAudioApproval
   } = useLocalStorage();
 
   // Track if user has completed landing page welcome sequence
@@ -93,6 +94,7 @@ export const App: React.FC = () => {
                 onToggleSourceApproval={toggleSourceApproval}
                 onSaveEmailProfile={saveEmailProfile}
                 onImportProgress={importProgress}
+                onToggleQuranAudioApproval={toggleQuranAudioApproval}
               />
             } 
           />

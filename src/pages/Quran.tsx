@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { fatihahVerses } from '../data/quran';
+import { quranAudioRegistry } from '../data/quranAudio';
 import QuranWordSelector from '../components/QuranWordSelector';
+import QuranAudioPlayer from '../components/QuranAudioPlayer';
 import { UserProgress } from '../types';
-import { Bookmark, ShieldAlert, Sparkles, AlertCircle } from 'lucide-react';
+import { Bookmark, ShieldAlert, Sparkles, AlertCircle, Headphones } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface QuranProps {
@@ -11,6 +13,7 @@ interface QuranProps {
 
 export const Quran: React.FC<QuranProps> = ({ progress }) => {
   const navigate = useNavigate();
+  const [activeVerseIdx, setActiveVerseIdx] = useState<number>(0);
 
   // Count approved sources in our loaded dataset
   const allSources = [
@@ -82,14 +85,44 @@ export const Quran: React.FC<QuranProps> = ({ progress }) => {
         <p className="text-xs text-charcoal/50 dark:text-ivory/50">"The Opening" &bull; 7 Verses &bull; Revealed in Makkah</p>
       </div>
 
-      {/* List of 7 Verses (Word Selector interface) */}
-      <div className="space-y-6">
-        {fatihahVerses.map((verse) => (
-          <QuranWordSelector
+      {/* ─── QURAN AUDIO PLAYER ───────────────────────────────────────────── */}
+      <div className="space-y-2">
+        <div className="flex items-center space-x-2 text-xs font-bold text-charcoal/40 dark:text-ivory/40 uppercase tracking-wider">
+          <Headphones className="w-4 h-4" />
+          <span>Recitation Audio</span>
+        </div>
+        <QuranAudioPlayer
+          audioItems={quranAudioRegistry}
+          currentVerseIndex={activeVerseIdx}
+          onVerseChange={setActiveVerseIdx}
+          dynamicApprovals={progress.quranAudioApprovals}
+        />
+      </div>
+
+      {/* List of 7 Verses with active verse highlight */}
+      <div className="space-y-4">
+        {fatihahVerses.map((verse, idx) => (
+          <div
             key={verse.id}
-            verse={verse}
-            progress={progress}
-          />
+            onClick={() => setActiveVerseIdx(idx)}
+            className={`rounded-2xl transition-all cursor-pointer ring-2 ${
+              activeVerseIdx === idx
+                ? 'ring-emerald/40 shadow-md'
+                : 'ring-transparent'
+            }`}
+          >
+            {/* Active indicator */}
+            {activeVerseIdx === idx && (
+              <div className="flex items-center space-x-2 px-4 pt-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse" />
+                <span className="text-[10px] font-bold text-emerald uppercase tracking-wider">Now Playing</span>
+              </div>
+            )}
+            <QuranWordSelector
+              verse={verse}
+              progress={progress}
+            />
+          </div>
         ))}
       </div>
 

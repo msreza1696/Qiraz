@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserProgress } from '../types';
 import { fatihahVerses } from '../data/quran';
 import { theologicalContents } from '../data/islamicContent';
+import { quranAudioRegistry } from '../data/quranAudio';
 import { 
   Settings as SettingsIcon, 
   User, 
@@ -12,7 +13,8 @@ import {
   Sun,
   Download,
   Upload,
-  KeyRound
+  KeyRound,
+  Headphones
 } from 'lucide-react';
 
 interface SettingsProps {
@@ -22,6 +24,7 @@ interface SettingsProps {
   onToggleSourceApproval: (sourceId: string) => void;
   onSaveEmailProfile: (email: string) => void;
   onImportProgress: (imported: UserProgress) => void;
+  onToggleQuranAudioApproval: (audioId: string) => void;
 }
 
 export const Settings: React.FC<SettingsProps> = ({ 
@@ -30,7 +33,8 @@ export const Settings: React.FC<SettingsProps> = ({
   onResetProgress,
   onToggleSourceApproval,
   onSaveEmailProfile,
-  onImportProgress
+  onImportProgress,
+  onToggleQuranAudioApproval
 }) => {
   const [emailInput, setEmailInput] = useState<string>(progress.email || '');
   const [emailStatus, setEmailStatus] = useState<string>('');
@@ -412,6 +416,54 @@ export const Settings: React.FC<SettingsProps> = ({
           </div>
         </div>
 
+      </div>
+
+      {/* ─── QURAN RECITATION AUDIO REGISTRY ─────────────────────────────── */}
+      <div className="bg-white dark:bg-charcoal-light border border-charcoal/5 p-6 rounded-2xl shadow-sm space-y-5">
+        <div className="flex items-center space-x-2">
+          <Headphones className="w-5 h-5 text-emerald" />
+          <h3 className="text-sm font-bold">Quran Recitation Audio Registry</h3>
+        </div>
+        <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200/30 p-3 rounded-lg text-[10px] text-amber-800 dark:text-amber-300 leading-relaxed">
+          <strong>Governance Notice:</strong> No Quran recitation audio is approved by default. 
+          The project owner must supply the reciter name and a direct audio URL before toggling any entry to Approved. 
+          AI voice generation is strictly prohibited for Quran recitation. 
+          Each entry below is pending project owner review.
+        </div>
+        <div className="space-y-3">
+          {quranAudioRegistry.map((audio) => {
+            const isApproved = progress.quranAudioApprovals[audio.id] === true || audio.approved;
+            return (
+              <div key={audio.id} className="flex flex-col md:flex-row justify-between md:items-center gap-3 p-3 border border-charcoal/5 dark:border-ivory/5 rounded-xl">
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-bold text-charcoal dark:text-white">
+                    Surah {audio.surahNumber} — Ayah {audio.ayahNumber}
+                  </p>
+                  <p className="text-[10px] text-charcoal/50 dark:text-ivory/50 mt-0.5">
+                    Reciter: <span className={isApproved ? 'text-emerald font-semibold' : 'italic'}>{audio.reciterName}</span>
+                  </p>
+                  <p className="text-[10px] text-charcoal/40 dark:text-ivory/30 truncate">
+                    URL: {audio.audioUrl || 'Not yet supplied'}
+                  </p>
+                </div>
+                <button
+                  onClick={() => onToggleQuranAudioApproval(audio.id)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all flex items-center space-x-1.5 flex-shrink-0 ${
+                    isApproved
+                      ? 'bg-emerald text-white border-emerald hover:bg-emerald-dark'
+                      : 'border-amber-400/40 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 hover:border-amber-500'
+                  }`}
+                >
+                  {isApproved ? (
+                    <><CheckCircle className="w-3.5 h-3.5" /><span>Approved</span></>
+                  ) : (
+                    <><ShieldAlert className="w-3.5 h-3.5" /><span>Pending</span></>
+                  )}
+                </button>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
     </div>

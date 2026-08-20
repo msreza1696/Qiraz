@@ -82,6 +82,24 @@ export interface QuranVerse {
   grammarNotes: SourceLockedContent[];
 }
 
+/**
+ * QURAN AUDIO — Source-controlled recitation audio.
+ * Only entries with approved=true may be played as authoritative Quranic recitation.
+ * Never use AI voice generation for Quran recitation.
+ * audioUrl must point to a human reciter explicitly approved by the project owner.
+ */
+export interface QuranAudio {
+  id: string;
+  surahNumber: number;
+  ayahNumber: number;
+  reciterName: string;
+  audioUrl: string;
+  sourceName: string;
+  sourceUrl?: string;
+  approved: boolean;
+  notes?: string;
+}
+
 export interface MatchingPair {
   left: string;
   right: string;
@@ -114,5 +132,6 @@ export interface UserProgress {
   darkMode: boolean;
   sourceApprovals: Record<string, boolean>; // Dynamically maps sourceId -> approved override by project owner
   languageVerifications: Record<string, boolean>; // Dynamically maps languageItemId -> verified override
+  quranAudioApprovals: Record<string, boolean>; // Maps QuranAudio.id -> approved by project owner
   email?: string;
 }

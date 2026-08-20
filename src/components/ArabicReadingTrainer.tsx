@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Check, X, ArrowRight, Play, RotateCcw, AlertTriangle } from 'lucide-react';
 import { UserProgress } from '../types';
+import ListenButton from './ListenButton';
 
 interface TrainerItem {
   id: string;
@@ -248,13 +249,15 @@ export const ArabicReadingTrainer: React.FC<ArabicReadingTrainerProps> = ({ prog
         </span>
 
         {/* Large Arabic Typography */}
-        <div className="py-8 w-full flex items-center justify-center">
+        <div className="py-8 w-full flex flex-col items-center justify-center space-y-3">
           <span 
             className="font-arabic text-8xl md:text-9xl text-charcoal-dark dark:text-white leading-normal select-none"
             style={{ fontSize: progress.arabicFontSize === 'xl' ? '6rem' : '7.5rem' }}
           >
             {currentItem.arabic}
           </span>
+          {/* Listen — Arabic Pronunciation TTS (Reading Trainer only, NOT Quran recitation) */}
+          <ListenButton arabicText={currentItem.arabic} label="🔊 Listen to pronunciation" />
         </div>
 
         <p className="text-sm font-medium text-charcoal/50 dark:text-ivory/50">

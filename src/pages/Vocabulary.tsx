@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { vocabularyList } from '../data/vocabulary';
 import { VocabularyWord, UserProgress } from '../types';
 import RootExplorer from '../components/RootExplorer';
+import ListenButton from '../components/ListenButton';
 import { 
   Compass, 
   RotateCcw, 
@@ -154,6 +155,11 @@ export const Vocabulary: React.FC<VocabularyProps> = ({ progress, onReviewVocabu
                       {currentWord.arabic}
                     </span>
 
+                    {/* Arabic Pronunciation — TTS only, NOT Quran recitation */}
+                    <div className="mt-3">
+                      <ListenButton arabicText={currentWord.arabic} label="🔊 Arabic Pronunciation" size="sm" />
+                    </div>
+
                     {!isFlipped && (
                       <button
                         onClick={() => setIsFlipped(true)}
@@ -290,7 +296,9 @@ export const Vocabulary: React.FC<VocabularyProps> = ({ progress, onReviewVocabu
                     <span className="font-arabic text-3xl text-charcoal-dark dark:text-white font-bold select-none leading-none block">
                       {word.arabic}
                     </span>
-                    
+                    <div className="flex justify-end">
+                      <ListenButton arabicText={word.arabic} compact size="sm" />
+                    </div>
                     {isVerified ? (
                       <span className="text-[8px] bg-emerald-bg dark:bg-emerald/10 text-emerald px-1.5 py-0.2 rounded font-bold inline-block">
                         Verified
