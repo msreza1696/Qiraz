@@ -108,8 +108,11 @@ export const Learn: React.FC<LearnProps> = ({ progress, onCompleteLesson, onReco
     // Record quiz score
     onRecordScore(`lesson-${activeLesson.id}-quiz`, score, percentage);
     
-    // Automatically complete lesson if they did reasonably well
-    onCompleteLesson(activeLesson.id);
+    // Automatically complete lesson if verified, otherwise skip completing it (achievement)
+    const isLessonVerified = activeLesson.verified !== false && activeLesson.approved !== false;
+    if (isLessonVerified) {
+      onCompleteLesson(activeLesson.id);
+    }
     setLessonStep('completed');
   };
 
@@ -365,16 +368,25 @@ export const Learn: React.FC<LearnProps> = ({ progress, onCompleteLesson, onReco
           <div className="bg-white dark:bg-charcoal-light border border-charcoal/5 dark:border-ivory/5 p-8 rounded-2xl text-center space-y-6 shadow-sm animate-fade-in">
             <span className="text-6xl block select-none mb-2">🎓</span>
             <h2 className="text-2xl font-bold tracking-tight text-charcoal dark:text-white">
-              Lesson Complete!
+              {activeLesson.verified !== false && activeLesson.approved !== false ? 'Lesson Complete!' : 'Preview Session Complete'}
             </h2>
             <p className="text-xs text-charcoal/60 dark:text-ivory/60 max-w-sm mx-auto leading-normal">
-              Congratulations! You have completed Lesson {activeLesson.lessonNumber}: "{activeLesson.title}". Your progress has been updated and saved in LocalStorage.
+              {activeLesson.verified !== false && activeLesson.approved !== false
+                ? `Congratulations! You have completed Lesson ${activeLesson.lessonNumber}: "${activeLesson.title}". Your progress has been updated and saved in LocalStorage.`
+                : `You have finished the preview for Lesson ${activeLesson.lessonNumber}: "${activeLesson.title}". As this lesson is a draft pending source review, it has not been recorded as a completed curriculum achievement.`}
             </p>
 
-            <div className="bg-emerald-bg dark:bg-emerald/10 p-3 rounded-lg flex items-center justify-center space-x-2 text-emerald">
-              <CheckCircle className="w-5 h-5" />
-              <span className="text-xs font-bold font-mono">100% Path Completion Incremented</span>
-            </div>
+            {activeLesson.verified !== false && activeLesson.approved !== false ? (
+              <div className="bg-emerald-bg dark:bg-emerald/10 p-3 rounded-lg flex items-center justify-center space-x-2 text-emerald">
+                <CheckCircle className="w-5 h-5" />
+                <span className="text-xs font-bold font-mono">100% Path Completion Incremented</span>
+              </div>
+            ) : (
+              <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200/40 p-3 rounded-lg flex items-center justify-center space-x-2 text-amber-600 dark:text-amber-400">
+                <ShieldAlert className="w-5 h-5 flex-shrink-0" />
+                <span className="text-xs font-bold font-mono uppercase">Draft Preview Mode — Progress Excluded</span>
+              </div>
+            )}
 
             <button 
               onClick={handleBackToLessons}
@@ -455,7 +467,7 @@ export const Learn: React.FC<LearnProps> = ({ progress, onCompleteLesson, onReco
         <div className="flex-shrink-0 bg-emerald-bg/10 dark:bg-emerald/10 border border-emerald/10 px-4 py-2.5 rounded-xl text-center">
           <span className="text-[10px] font-bold text-emerald uppercase block">Completed</span>
           <span className="text-lg font-extrabold text-emerald">
-            {activeLessons.filter(l => progress.completedLessons.includes(l.id)).length} / {activeLessons.length}
+            {activeLessons.filter(l => progress.completedLessons.includes(l.id) && l.verified !== false && l.approved !== false).length} / {activeLessons.filter(l => l.verified !== false && l.approved !== false).length}
           </span>
         </div>
       </div>
@@ -463,7 +475,7 @@ export const Learn: React.FC<LearnProps> = ({ progress, onCompleteLesson, onReco
       {/* Grid of 10 Lessons */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {activeLessons.map((lesson) => {
-          const isComplete = progress.completedLessons.includes(lesson.id);
+          const isComplete = progress.completedLessons.includes(lesson.id) && lesson.verified !== false && lesson.approved !== false;
           return (
             <div 
               key={lesson.id}
@@ -476,9 +488,16 @@ export const Learn: React.FC<LearnProps> = ({ progress, onCompleteLesson, onReco
             >
               <div>
                 <div className="flex justify-between items-start">
-                  <span className="text-[10px] font-bold text-emerald-dark bg-emerald-bg dark:bg-emerald/10 px-2 py-0.5 rounded font-mono">
-                    LESSON {String(lesson.lessonNumber).padStart(2, '0')}
-                  </span>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1.5">
+                    <span className="text-[10px] font-bold text-emerald-dark bg-emerald-bg dark:bg-emerald/10 px-2 py-0.5 rounded font-mono">
+                      LESSON {String(lesson.lessonNumber).padStart(2, '0')}
+                    </span>
+                    {(lesson.verified === false || lesson.approved === false) && (
+                      <span className="text-[8px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-950/20 px-1.5 py-0.5 rounded border border-amber-200/30 font-mono uppercase tracking-wider">
+                        DRAFT — SOURCE REVIEW PENDING
+                      </span>
+                    )}
+                  </div>
                   
                   {isComplete ? (
                     <div className="flex items-center text-xs text-emerald font-semibold">

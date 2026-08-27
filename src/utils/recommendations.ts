@@ -43,7 +43,7 @@ export function getStudyRecommendation(progress: UserProgress): StudyRecommendat
     const allLessons = [...path1Lessons, ...path2Lessons, ...path3Lessons, ...minhajLessons];
     const matchingLesson = allLessons.find(l => l.quizQuestions.includes(quizId) || l.id === quizId);
     
-    if (matchingLesson) {
+    if (matchingLesson && matchingLesson.verified !== false && matchingLesson.approved !== false) {
       return {
         type: 'quiz-practice',
         id: matchingLesson.id,
@@ -97,8 +97,8 @@ export function getStudyRecommendation(progress: UserProgress): StudyRecommendat
     };
   }
 
-  // Try Minhaj-ul-Arabia
-  const nextMinhaj = minhajLessons.find(l => !progress.completedLessons.includes(l.id));
+  // Try Minhaj-ul-Arabia (Only recommend if verified & approved)
+  const nextMinhaj = minhajLessons.find(l => !progress.completedLessons.includes(l.id) && l.verified !== false && l.approved !== false);
   if (nextMinhaj) {
     return {
       type: 'lesson',
