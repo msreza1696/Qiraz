@@ -335,6 +335,70 @@ export const quizQuestions: QuizQuestion[] = [
     options: ['He wrote', 'She wrote', 'I wrote', 'They wrote'],
     correctAnswer: 'I wrote',
     verified: true
+  },
+  // Minhaj-ul-Arabia Integration Questions
+  {
+    id: 'q-minhaj-1-1',
+    category: 'grammar',
+    type: 'multiple-choice',
+    question: 'Select the correct translation of: ذَلِكَ قَلَمٌ',
+    options: ['This is a pen.', 'That is a pen.', 'That is a book.'],
+    correctAnswer: 'That is a pen.',
+    verified: true
+  },
+  {
+    id: 'q-minhaj-1-2',
+    category: 'grammar',
+    type: 'multiple-choice',
+    question: 'Which of the following means "This is a dog"?',
+    options: ['هَذَا كَلْبٌ', 'ذَلِكَ كَلْبٌ', 'هَذَا قِطٌّ'],
+    correctAnswer: 'هَذَا كَلْبٌ',
+    verified: true
+  },
+  {
+    id: 'q-minhaj-2-1',
+    category: 'grammar',
+    type: 'multiple-choice',
+    question: 'Choose the correct translation of: مَا ذَلِكَ؟',
+    options: ['Who is that?', 'What is that?', 'What is this?'],
+    correctAnswer: 'What is that?',
+    verified: true
+  },
+  {
+    id: 'q-minhaj-3-1',
+    category: 'grammar',
+    type: 'multiple-choice',
+    question: 'How do you say "Who is this?" in Arabic?',
+    options: ['مَا هَذَا؟', 'مَنْ هَذَا؟', 'مَنْ ذَلِكَ؟'],
+    correctAnswer: 'مَنْ هَذَا؟',
+    verified: true
+  },
+  {
+    id: 'q-minhaj-4-1',
+    category: 'grammar',
+    type: 'multiple-choice',
+    question: 'Which of these is the definite form of جَمَلٌ?',
+    options: ['الْجَمَلُ', 'الْجَمَلٌ', 'جَمَلُ'],
+    correctAnswer: 'الْجَمَلُ',
+    verified: true
+  },
+  {
+    id: 'q-minhaj-5-1',
+    category: 'grammar',
+    type: 'multiple-choice',
+    question: 'Translate: الْقَلَمُ مَكْسُورٌ',
+    options: ['The book is new.', 'The pen is broken.', 'The pen is new.'],
+    correctAnswer: 'The pen is broken.',
+    verified: true
+  },
+  {
+    id: 'q-minhaj-placeholder',
+    category: 'grammar',
+    type: 'multiple-choice',
+    question: 'Minhaj-ul-Arabia placeholder review question. (Pending verification)',
+    options: ['Continue', 'Skip'],
+    correctAnswer: 'Continue',
+    verified: false
   }
 ];
 export function getQuizByCategory(category: string): QuizQuestion[] {

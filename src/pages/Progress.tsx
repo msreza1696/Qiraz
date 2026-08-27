@@ -3,6 +3,7 @@ import { UserProgress } from '../types';
 import { getOverallProgressPercent } from '../utils/recommendations';
 import { path1Lessons, path3Lessons } from '../data/language';
 import { path2Lessons, vocabularyList } from '../data/vocabulary';
+import { minhajLessons } from '../data/minhaj';
 import { Flame, Award, Clock, CheckCircle2, Star, BookOpen } from 'lucide-react';
 
 interface ProgressProps {
@@ -13,7 +14,7 @@ export const Progress: React.FC<ProgressProps> = ({ progress }) => {
   const overall = getOverallProgressPercent(progress);
 
   // Total lessons count
-  const totalLessons = path1Lessons.length + path2Lessons.length + path3Lessons.length;
+  const totalLessons = path1Lessons.length + path2Lessons.length + path3Lessons.length + minhajLessons.length;
   const completedLessonsCount = progress.completedLessons.length;
 
   // Spaced repetition vocabulary count
@@ -204,6 +205,22 @@ export const Progress: React.FC<ProgressProps> = ({ progress }) => {
                 <div 
                   className="bg-emerald h-full rounded-full transition-all duration-300"
                   style={{ width: `${overall.grammar}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Minhaj-ul-Arabia */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-semibold">Path 04 — Minhaj-ul-Arabia</span>
+                <span className="text-charcoal/50 dark:text-ivory/50">
+                  {minhajLessons.filter(l => progress.completedLessons.includes(l.id)).length} / {minhajLessons.length} lessons
+                </span>
+              </div>
+              <div className="w-full bg-charcoal/5 dark:bg-ivory/5 h-2 rounded-full overflow-hidden">
+                <div 
+                  className="bg-emerald h-full rounded-full transition-all duration-300"
+                  style={{ width: `${overall.minhaj}%` }}
                 />
               </div>
             </div>

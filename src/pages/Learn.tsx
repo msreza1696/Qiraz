@@ -9,11 +9,14 @@ import {
   Check, 
   Clock, 
   ArrowLeft, 
-  X
+  X,
+  Library,
+  ShieldAlert
 } from 'lucide-react';
 import { UserProgress, Lesson } from '../types';
 import { path1Lessons, path3Lessons } from '../data/language';
 import { path2Lessons } from '../data/vocabulary';
+import { minhajLessons } from '../data/minhaj';
 import { quizQuestions } from '../data/quizzes';
 import QuizEngine from '../components/QuizEngine';
 
@@ -35,7 +38,7 @@ export const Learn: React.FC<LearnProps> = ({ progress, onCompleteLesson, onReco
   // Automatically start lesson from start URL param (e.g. from Dashboard or Grammar indexes)
   useEffect(() => {
     if (startLessonId) {
-      const allLessons = [...path1Lessons, ...path2Lessons, ...path3Lessons];
+      const allLessons = [...path1Lessons, ...path2Lessons, ...path3Lessons, ...minhajLessons];
       const lessonToStart = allLessons.find(l => l.id === startLessonId);
       if (lessonToStart) {
         setActiveLesson(lessonToStart);
@@ -54,7 +57,7 @@ export const Learn: React.FC<LearnProps> = ({ progress, onCompleteLesson, onReco
   const [practiceAnswered, setPracticeAnswered] = useState<boolean>(false);
 
   // Set URL parameter helper
-  const setPathTab = (tab: 'foundations' | 'vocabulary' | 'grammar') => {
+  const setPathTab = (tab: 'foundations' | 'vocabulary' | 'grammar' | 'minhaj') => {
     setSearchParams({ path: tab });
     setActiveLesson(null);
   };
@@ -64,6 +67,7 @@ export const Learn: React.FC<LearnProps> = ({ progress, onCompleteLesson, onReco
       case 'foundations': return path1Lessons;
       case 'vocabulary': return path2Lessons;
       case 'grammar': return path3Lessons;
+      case 'minhaj': return minhajLessons;
       default: return path1Lessons;
     }
   };
@@ -157,6 +161,19 @@ export const Learn: React.FC<LearnProps> = ({ progress, onCompleteLesson, onReco
             );
           })}
         </div>
+
+        {/* Governance warning for unverified/unapproved content */}
+        {(activeLesson.verified === false || activeLesson.approved === false) && (
+          <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200/40 dark:border-amber-900/30 p-4 rounded-xl flex items-start space-x-3 text-xs text-amber-800 dark:text-amber-300">
+            <ShieldAlert className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+            <div>
+              <h4 className="font-bold">Content Audit Pending — Review Required</h4>
+              <p className="mt-0.5 leading-relaxed text-[11px]">
+                This lesson ({activeLesson.sourceBook || 'General Curriculum'} Lesson {activeLesson.sourceLesson || activeLesson.lessonNumber}) has not yet been audited and verified by the project owner. Exercises and translation keys are in draft state.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* STEP 1: EXPLANATION */}
         {lessonStep === 'explanation' && (
@@ -384,11 +401,12 @@ export const Learn: React.FC<LearnProps> = ({ progress, onCompleteLesson, onReco
         </div>
         
         {/* Responsive Tab row */}
-        <div className="bg-charcoal/5 dark:bg-ivory/10 p-1.5 rounded-xl flex space-x-1.5 self-start">
+        <div className="bg-charcoal/5 dark:bg-ivory/10 p-1.5 rounded-xl flex flex-wrap gap-1.5 self-start">
           {[
             { id: 'foundations', label: '1. Foundations', icon: BookOpen },
             { id: 'vocabulary', label: '2. Vocabulary', icon: Compass },
-            { id: 'grammar', label: '3. Grammar', icon: Award }
+            { id: 'grammar', label: '3. Grammar', icon: Award },
+            { id: 'minhaj', label: '4. Minhaj Track', icon: Library }
           ].map((tab) => {
             const Icon = tab.icon;
             const isTabActive = activePathTab === tab.id;
@@ -414,14 +432,22 @@ export const Learn: React.FC<LearnProps> = ({ progress, onCompleteLesson, onReco
       <div className="bg-white dark:bg-charcoal-light border border-charcoal/5 dark:border-ivory/5 p-5 rounded-2xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h3 className="text-lg font-bold text-charcoal dark:text-white">
-            {activePathTab === 'foundations' ? 'Path 01 — Arabic Foundations' : activePathTab === 'vocabulary' ? 'Path 02 — Qur\'anic Vocabulary' : 'Path 03 — Arabic Grammar'}
+            {activePathTab === 'foundations' 
+              ? 'Path 01 — Arabic Foundations' 
+              : activePathTab === 'vocabulary' 
+              ? 'Path 02 — Qur\'anic Vocabulary' 
+              : activePathTab === 'grammar' 
+              ? 'Path 03 — Arabic Grammar' 
+              : 'Path 04 — Minhaj-ul-Arabia'}
           </h3>
           <p className="text-xs text-charcoal/60 dark:text-ivory/60 mt-0.5 max-w-xl leading-normal">
             {activePathTab === 'foundations' 
               ? 'Learn basic Arabic letters, how shapes connect in cursive scripting, sukoon, shaddah rules, and short/long vowel markers.' 
               : activePathTab === 'vocabulary'
               ? 'Explore high-frequency Quranic terms, three-letter roots, and detailed meaning breakdowns under strict governance.'
-              : 'Grasp the building blocks of sentence forms (nouns, verbs, particles), possessives, matching adjectives, and verbs conjugation.'}
+              : activePathTab === 'grammar'
+              ? 'Grasp the building blocks of sentence forms (nouns, verbs, particles), possessives, matching adjectives, and verbs conjugation.'
+              : 'Study the classical Minhaj-ul-Arabia curriculum transformed into an interactive, step-by-step vocabulary and grammar track.'}
           </p>
         </div>
         

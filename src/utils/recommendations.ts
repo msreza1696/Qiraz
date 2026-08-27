@@ -1,13 +1,14 @@
 import { UserProgress } from '../types';
 import { path1Lessons, path3Lessons } from '../data/language';
 import { path2Lessons, vocabularyList } from '../data/vocabulary';
+import { minhajLessons } from '../data/minhaj';
 
 export interface StudyRecommendation {
   type: 'lesson' | 'quiz-practice' | 'vocab-review';
   id: string;
   title: string;
   description: string;
-  pathId?: 'foundations' | 'vocabulary' | 'grammar';
+  pathId?: 'foundations' | 'vocabulary' | 'grammar' | 'minhaj';
   lessonNumber?: number;
 }
 
@@ -39,7 +40,7 @@ export function getStudyRecommendation(progress: UserProgress): StudyRecommendat
     const scoreInfo = lowScores[0][1];
     
     // Find matching lesson
-    const allLessons = [...path1Lessons, ...path2Lessons, ...path3Lessons];
+    const allLessons = [...path1Lessons, ...path2Lessons, ...path3Lessons, ...minhajLessons];
     const matchingLesson = allLessons.find(l => l.quizQuestions.includes(quizId) || l.id === quizId);
     
     if (matchingLesson) {
@@ -55,7 +56,7 @@ export function getStudyRecommendation(progress: UserProgress): StudyRecommendat
   }
 
   // 3. Continue Learning: Next incomplete lesson in path order
-  // Order: Foundations -> Quranic Vocabulary -> Arabic Grammar
+  // Order: Foundations -> Quranic Vocabulary -> Arabic Grammar -> Minhaj-ul-Arabia
   
   // Try Foundations
   const nextFoundations = path1Lessons.find(l => !progress.completedLessons.includes(l.id));
@@ -96,6 +97,19 @@ export function getStudyRecommendation(progress: UserProgress): StudyRecommendat
     };
   }
 
+  // Try Minhaj-ul-Arabia
+  const nextMinhaj = minhajLessons.find(l => !progress.completedLessons.includes(l.id));
+  if (nextMinhaj) {
+    return {
+      type: 'lesson',
+      id: nextMinhaj.id,
+      title: `Lesson ${nextMinhaj.lessonNumber}: ${nextMinhaj.title}`,
+      description: nextMinhaj.description,
+      pathId: 'minhaj',
+      lessonNumber: nextMinhaj.lessonNumber
+    };
+  }
+
   // 4. Default: No recommendation (all complete!)
   return null;
 }
@@ -103,16 +117,19 @@ export function getOverallProgressPercent(progress: UserProgress): {
   reading: number;
   vocabulary: number;
   grammar: number;
+  minhaj: number;
   total: number;
 } {
   const readComp = path1Lessons.filter(l => progress.completedLessons.includes(l.id)).length;
   const vocabComp = path2Lessons.filter(l => progress.completedLessons.includes(l.id)).length;
   const gramComp = path3Lessons.filter(l => progress.completedLessons.includes(l.id)).length;
+  const minhajComp = minhajLessons.filter(l => progress.completedLessons.includes(l.id)).length;
 
   const reading = Math.round((readComp / path1Lessons.length) * 100);
   const vocabulary = Math.round((vocabComp / path2Lessons.length) * 100);
   const grammar = Math.round((gramComp / path3Lessons.length) * 100);
-  const total = Math.round(((readComp + vocabComp + gramComp) / (path1Lessons.length + path2Lessons.length + path3Lessons.length)) * 100);
+  const minhaj = Math.round((minhajComp / minhajLessons.length) * 100);
+  const total = Math.round(((readComp + vocabComp + gramComp + minhajComp) / (path1Lessons.length + path2Lessons.length + path3Lessons.length + minhajLessons.length)) * 100);
 
-  return { reading, vocabulary, grammar, total };
+  return { reading, vocabulary, grammar, minhaj, total };
 }

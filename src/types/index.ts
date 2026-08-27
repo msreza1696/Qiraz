@@ -26,6 +26,11 @@ export interface LessonExample {
   english: string;
   explanation?: string;
   verified: boolean;
+  sourceBook?: string;
+  sourcePart?: string;
+  sourceLesson?: number;
+  sourcePage?: number;
+  approved?: boolean;
 }
 
 export interface PracticeExercise {
@@ -35,11 +40,17 @@ export interface PracticeExercise {
   correctAnswer: string;
   arabicText?: string;
   type: 'multiple-choice' | 'spelling';
+  sourceBook?: string;
+  sourcePart?: string;
+  sourceLesson?: number;
+  sourcePage?: number;
+  verified?: boolean;
+  approved?: boolean;
 }
 
 export interface Lesson {
   id: string;
-  pathId: 'foundations' | 'vocabulary' | 'grammar';
+  pathId: 'foundations' | 'vocabulary' | 'grammar' | 'minhaj';
   lessonNumber: number;
   title: string;
   description: string;
@@ -49,6 +60,12 @@ export interface Lesson {
   examples: LessonExample[];
   practiceExercises: PracticeExercise[];
   quizQuestions: string[]; // References to QuizQuestion IDs
+  sourceBook?: string;
+  sourcePart?: string;
+  sourceLesson?: number;
+  sourcePage?: number;
+  verified?: boolean;
+  approved?: boolean;
 }
 
 export interface VocabularyWord {
@@ -62,6 +79,11 @@ export interface VocabularyWord {
   quranicOccurrence?: string;
   verified: boolean;
   verifiedBy?: string;
+  sourceBook?: string;
+  sourcePart?: string;
+  sourceLesson?: number;
+  sourcePage?: number;
+  approved?: boolean;
 }
 
 export interface QuranWord {
